@@ -1,0 +1,8 @@
+{
+    "KPlugin": {
+        "Id": "com.tjtan.chess",
+        "Name": "Lichess Puzzle"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

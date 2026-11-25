@@ -1,0 +1,8 @@
+{
+    "KPlugin": {
+        "Id": "com.tjtan.quote",
+        "Name": "Zen Quote"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
