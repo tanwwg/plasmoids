@@ -186,47 +186,55 @@ PlasmoidItem {
             }
 
             // Forecast periods
-            Repeater {
-                model: root.region
-                    ? (root.forecast?.periods ?? [])
-                    : []
+            RowLayout {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.topMargin: 6
+                visible: forecastPeriods.count > 0
+                spacing: 16
 
-                delegate: ColumnLayout {
-                    required property var modelData
+                Repeater {
+                    id: forecastPeriods
 
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: 6
+                    model: root.region
+                        ? (root.forecast?.periods ?? [])
+                        : []
 
-                    spacing: 2
+                    delegate: ColumnLayout {
+                        required property var modelData
 
-                    Image {
                         Layout.alignment: Qt.AlignHCenter
-                        Layout.preferredWidth: 24
-                        Layout.preferredHeight: 24
-                        opacity: 0.6
 
-                        Accessible.role: Accessible.Graphic
-                        Accessible.name: modelData.timePeriod.text
+                        spacing: 2
 
-                        source: {
-                            const period = (modelData.timePeriod.text ?? "").trim().toLowerCase()
-                            if (period.startsWith("6 am"))
-                                return "../icons/morning.svg"
-                            if (period.startsWith("6 pm"))
-                                return "../icons/night.svg"
-                            return "../icons/afternoon.svg"
+                        Image {
+                            Layout.alignment: Qt.AlignHCenter
+                            Layout.preferredWidth: 24
+                            Layout.preferredHeight: 24
+                            opacity: 0.6
+
+                            Accessible.role: Accessible.Graphic
+                            Accessible.name: modelData.timePeriod.text
+
+                            source: {
+                                const period = (modelData.timePeriod.text ?? "").trim().toLowerCase()
+                                if (period.startsWith("6 am"))
+                                    return "../icons/morning.svg"
+                                if (period.startsWith("6 pm"))
+                                    return "../icons/night.svg"
+                                return "../icons/afternoon.svg"
+                            }
                         }
-                    }
 
-                    Kirigami.Icon {
-                        Layout.alignment: Qt.AlignHCenter
-                        Layout.preferredWidth: 24
-                        Layout.preferredHeight: 24
+                        Kirigami.Icon {
+                            Layout.alignment: Qt.AlignHCenter
+                            Layout.preferredWidth: 24
+                            Layout.preferredHeight: 24
 
-                        source: root.weatherIcon(modelData.regions[root.region]?.code)
+                            source: root.weatherIcon(modelData.regions[root.region]?.code)
 
-                        Accessible.role: Accessible.Graphic
-                        Accessible.name: modelData.regions[root.region]?.text ?? "Weather unavailable"
+                            Accessible.role: Accessible.Graphic
+                            Accessible.name: modelData.regions[root.region]?.text ?? "Weather unavailable"
+                        }
                     }
                 }
             }
