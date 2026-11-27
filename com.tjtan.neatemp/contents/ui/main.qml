@@ -3,11 +3,13 @@ import QtQuick.Layouts
 import QtPositioning
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.plasma.plasmoid
+import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
 
 PlasmoidItem {
     id: root
 
+    Plasmoid.backgroundHints: PlasmaCore.Types.ShadowBackground | PlasmaCore.Types.ConfigurableBackground
     preferredRepresentation: fullRepresentation
 
     readonly property string locationStatus: {
