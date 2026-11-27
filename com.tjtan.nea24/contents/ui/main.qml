@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtPositioning
 
+import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.plasma.core as PlasmaCore
@@ -54,6 +55,57 @@ PlasmoidItem {
         }
 
         return nearest
+    }
+
+    function weatherIcon(code) {
+        switch (code) {
+            case "FA":
+            case "FW":
+                return "weather-clear"
+
+            case "FN":
+                return "weather-clear-night"
+
+            case "PC":
+            case "PD":
+                return "weather-few-clouds"
+
+            case "PN":
+                return "weather-few-clouds-night"
+
+            case "CL":
+                return "weather-overcast"
+
+            case "HZ":
+            case "LH":
+            case "FG":
+            case "BR":
+                return "weather-fog"
+
+            case "WD":
+                return "weather-windy"
+
+            case "LR":
+            case "PS":
+            case "LS":
+                return "weather-showers-scattered"
+
+            case "MR":
+            case "RA":
+            case "HR":
+            case "SH":
+            case "HS":
+                return "weather-showers"
+
+            case "TL":
+            case "TS":
+            case "HT":
+            case "HG":
+                return "weather-storm"
+
+            default:
+                return "weather-none-available"
+        }
     }
 
     function refresh() {
@@ -147,17 +199,34 @@ PlasmoidItem {
 
                     spacing: 2
 
-                    PlasmaComponents.Label {
+                    Image {
                         Layout.alignment: Qt.AlignHCenter
-                        text: modelData.timePeriod.text
-                        font.pointSize: 9
+                        Layout.preferredWidth: 24
+                        Layout.preferredHeight: 24
                         opacity: 0.6
+
+                        Accessible.role: Accessible.Graphic
+                        Accessible.name: modelData.timePeriod.text
+
+                        source: {
+                            const period = (modelData.timePeriod.text ?? "").trim().toLowerCase()
+                            if (period.startsWith("6 am"))
+                                return "../icons/morning.svg"
+                            if (period.startsWith("6 pm"))
+                                return "../icons/night.svg"
+                            return "../icons/afternoon.svg"
+                        }
                     }
 
-                    PlasmaComponents.Label {
+                    Kirigami.Icon {
                         Layout.alignment: Qt.AlignHCenter
-                        text: modelData.regions[root.region]?.text ?? ""
-                        font.bold: true
+                        Layout.preferredWidth: 24
+                        Layout.preferredHeight: 24
+
+                        source: root.weatherIcon(modelData.regions[root.region]?.code)
+
+                        Accessible.role: Accessible.Graphic
+                        Accessible.name: modelData.regions[root.region]?.text ?? "Weather unavailable"
                     }
                 }
             }
