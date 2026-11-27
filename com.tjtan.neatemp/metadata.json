@@ -1,0 +1,8 @@
+{
+    "KPlugin": {
+        "Id": "com.tjtan.neatemp",
+        "Name": "NEA Temperature"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
