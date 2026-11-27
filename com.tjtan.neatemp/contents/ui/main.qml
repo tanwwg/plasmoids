@@ -11,11 +11,13 @@ PlasmoidItem {
     preferredRepresentation: fullRepresentation
 
     readonly property string locationStatus: {
+        console.log(positionSource.name)
+
         if (positionSource.position.coordinate.isValid)
             return ""
         if (!positionSource.valid || positionSource.sourceError !== PositionSource.NoError)
             return i18n("Location unavailable")
-        return i18n("Finding your location…")
+        return i18n("Finding your location… ")
     }
 
     Observation {
@@ -93,97 +95,50 @@ PlasmoidItem {
                 visible: humidity.nearestStation !== null
 
                 Kirigami.Icon {
-                    source: "weather-showers-symbolic"
+                    source: Qt.resolvedUrl("../icons/humidity.svg")
                     Layout.preferredWidth: 20
                     Layout.preferredHeight: 20
                 }
                 PlasmaComponents.Label {
                     text: `${humidity.nearestStation.value}%`
                 }
+
+                Kirigami.Icon {
+                    source:  Qt.resolvedUrl("../icons/wind.svg")
+                    Layout.preferredWidth: 20
+                    Layout.preferredHeight: 20
+                    isMask: true
+                    color: "white"
+                }
+                PlasmaComponents.Label {
+                    text: `${(windSpeed.nearestStation.value * 1.852).toFixed(1)} km/h`
+                }
+
             }
 
             RowLayout {
                 Layout.alignment: Qt.AlignHCenter
                 spacing: 6
-                visible: windSpeed.nearestStation !== null
+                visible: rainfall.nearestStation !== null && rainfall.nearestStation.value > 0              
 
                 Kirigami.Icon {
-                    source: "weather-clear-wind-symbolic"
+                    source:  Qt.resolvedUrl("../icons/rainfall.svg")
                     Layout.preferredWidth: 20
                     Layout.preferredHeight: 20
+                    isMask: true
+                    color: "white"
                 }
+
                 PlasmaComponents.Label {
-                    text: `${windSpeed.nearestStation.value * 1.852} km/h`
+                    text: `${(rainfall.nearestStation.value).toFixed(1)} mm / 5 min`
                 }
-            }
-
-            PlasmaComponents.Label {
-                Layout.alignment: Qt.AlignHCenter
-                visible: humidity.nearestStation !== null
-                text: {
-                    const station = humidity.nearestStation
-                    if (!station)
-                        return ""
-                    const percentage = station.value.toLocaleString(Qt.locale(), "f", 1)
-                    if (station.id === temperature.nearestStation?.id)
-                        return i18n("%1% relative humidity", percentage)
-                    return i18n("%1% relative humidity (%2)", percentage, station.name)
-                }
-            }
-
-            PlasmaComponents.Label {
-                Layout.alignment: Qt.AlignHCenter
-                visible: text !== ""
-                text: {
-                    const station = windSpeed.nearestStation
-                    if (!station)
-                        return windSpeed.statusMessage
-                    const speedKmh = (station.value * 1.852).toLocaleString(Qt.locale(), "f", 1)
-                    if (station.id === temperature.nearestStation?.id)
-                        return i18n("Wind speed %1 km/h", speedKmh)
-                    return i18n("Wind speed %1 km/h (%2)", speedKmh, station.name)
-                }
-            }
-
-            PlasmaComponents.Label {
-                Layout.alignment: Qt.AlignHCenter
-                visible: text !== ""
-                text: {
-                    const station = rainfall.nearestStation
-                    if (!station)
-                        return rainfall.statusMessage
-                    const value = station.value.toLocaleString(Qt.locale(), "f", 1)
-                    if (station.id === temperature.nearestStation?.id)
-                        return i18n("Rainfall %1 mm in 5 min", value)
-                    return i18n("Rainfall %1 mm in 5 min (%2)", value, station.name)
-                }
-            }
+            }           
 
             PlasmaComponents.Label {
                 Layout.alignment: Qt.AlignHCenter
                 visible: temperature.nearestStation !== null
-                text: temperature.nearestStation?.name ?? ""
-            }
-
-            PlasmaComponents.Label {
-                Layout.alignment: Qt.AlignHCenter
-                opacity: 0.6
-                visible: temperature.nearestStation !== null
-                text: temperature.nearestStation
-                    ? i18n("%1 km away", (temperature.nearestStation.distance / 1000).toLocaleString(Qt.locale(), "f", 2))
-                    : ""
-            }
-
-            PlasmaComponents.Label {
-                Layout.alignment: Qt.AlignHCenter
-                visible: text !== ""
-                text: temperature.statusMessage || root.locationStatus
-            }
-
-            PlasmaComponents.Label {
-                Layout.alignment: Qt.AlignHCenter
-                visible: text !== ""
-                text: humidity.statusMessage
+                textFormat: Text.RichText
+                text: `${temperature.nearestStation.name} <span style="color: gray; font-size: 85%;">(${(temperature.nearestStation.distance / 1000).toFixed(1)} km)</span>`
             }
         }
     }
