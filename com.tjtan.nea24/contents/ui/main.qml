@@ -4,11 +4,15 @@ import QtPositioning
 
 import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PlasmaComponents
+import org.kde.plasma.core as PlasmaCore
+
 
 PlasmoidItem {
     id: root
 
     preferredRepresentation: fullRepresentation
+    Plasmoid.backgroundHints: PlasmaCore.Types.ShadowBackground | PlasmaCore.Types.ConfigurableBackground
+
 
     property var forecast: null
 
