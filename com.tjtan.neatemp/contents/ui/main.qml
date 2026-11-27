@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtPositioning
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.plasma.plasmoid
+import org.kde.kirigami as Kirigami
 
 PlasmoidItem {
     id: root
@@ -35,6 +36,24 @@ PlasmoidItem {
         errorMessage: i18n("Unable to load relative humidity")
     }
 
+    Observation {
+        id: windSpeed
+        endpoint: "https://api-open.data.gov.sg/v2/real-time/api/wind-speed"
+        coordinate: positionSource.position.coordinate
+        loadingMessage: i18n("Loading wind speed…")
+        unavailableMessage: i18n("No wind speed readings available")
+        errorMessage: i18n("Unable to load wind speed")
+    }
+
+    Observation {
+        id: rainfall
+        endpoint: "https://api-open.data.gov.sg/v2/real-time/api/rainfall"
+        coordinate: positionSource.position.coordinate
+        loadingMessage: i18n("Loading rainfall…")
+        unavailableMessage: i18n("No rainfall readings available")
+        errorMessage: i18n("Unable to load rainfall")
+    }
+
     PositionSource {
         id: positionSource
         active: true
@@ -48,6 +67,8 @@ PlasmoidItem {
         onTriggered: {
             temperature.refresh()
             humidity.refresh()
+            windSpeed.refresh()
+            rainfall.refresh()
         }
     }
 
@@ -66,6 +87,36 @@ PlasmoidItem {
                         : ""
             }
 
+            RowLayout {
+                Layout.alignment: Qt.AlignHCenter
+                spacing: 6
+                visible: humidity.nearestStation !== null
+
+                Kirigami.Icon {
+                    source: "weather-showers-symbolic"
+                    Layout.preferredWidth: 20
+                    Layout.preferredHeight: 20
+                }
+                PlasmaComponents.Label {
+                    text: `${humidity.nearestStation.value}%`
+                }
+            }
+
+            RowLayout {
+                Layout.alignment: Qt.AlignHCenter
+                spacing: 6
+                visible: windSpeed.nearestStation !== null
+
+                Kirigami.Icon {
+                    source: "weather-clear-wind-symbolic"
+                    Layout.preferredWidth: 20
+                    Layout.preferredHeight: 20
+                }
+                PlasmaComponents.Label {
+                    text: `${windSpeed.nearestStation.value * 1.852} km/h`
+                }
+            }
+
             PlasmaComponents.Label {
                 Layout.alignment: Qt.AlignHCenter
                 visible: humidity.nearestStation !== null
@@ -82,13 +133,41 @@ PlasmoidItem {
 
             PlasmaComponents.Label {
                 Layout.alignment: Qt.AlignHCenter
+                visible: text !== ""
+                text: {
+                    const station = windSpeed.nearestStation
+                    if (!station)
+                        return windSpeed.statusMessage
+                    const speedKmh = (station.value * 1.852).toLocaleString(Qt.locale(), "f", 1)
+                    if (station.id === temperature.nearestStation?.id)
+                        return i18n("Wind speed %1 km/h", speedKmh)
+                    return i18n("Wind speed %1 km/h (%2)", speedKmh, station.name)
+                }
+            }
+
+            PlasmaComponents.Label {
+                Layout.alignment: Qt.AlignHCenter
+                visible: text !== ""
+                text: {
+                    const station = rainfall.nearestStation
+                    if (!station)
+                        return rainfall.statusMessage
+                    const value = station.value.toLocaleString(Qt.locale(), "f", 1)
+                    if (station.id === temperature.nearestStation?.id)
+                        return i18n("Rainfall %1 mm in 5 min", value)
+                    return i18n("Rainfall %1 mm in 5 min (%2)", value, station.name)
+                }
+            }
+
+            PlasmaComponents.Label {
+                Layout.alignment: Qt.AlignHCenter
                 visible: temperature.nearestStation !== null
                 text: temperature.nearestStation?.name ?? ""
             }
 
             PlasmaComponents.Label {
                 Layout.alignment: Qt.AlignHCenter
-                color: "gray"
+                opacity: 0.6
                 visible: temperature.nearestStation !== null
                 text: temperature.nearestStation
                     ? i18n("%1 km away", (temperature.nearestStation.distance / 1000).toLocaleString(Qt.locale(), "f", 2))
