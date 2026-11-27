@@ -1,0 +1,8 @@
+{
+    "KPlugin": {
+        "Id": "com.tjtan.nea24",
+        "Name": "NEA 24 hour forecast"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
