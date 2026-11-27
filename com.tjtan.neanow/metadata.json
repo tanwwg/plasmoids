@@ -1,0 +1,8 @@
+{
+    "KPlugin": {
+        "Id": "com.tjtan.neanow",
+        "Name": "NEA 2 hour nowcast"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
